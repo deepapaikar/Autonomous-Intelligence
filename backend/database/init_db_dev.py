@@ -1,21 +1,26 @@
 import mysql.connector
 
-from subprocess import Popen, PIPE
-
 dbName = "agents"
+password = "deepa2497"
 
-process = Popen(['mysql', dbName, '-u', 'root'],
-                stdout=PIPE, stdin=PIPE)
-output = process.communicate(b'source ' + b'schema.sql')[0]
-
+# Connect to MySQL
 connection = mysql.connector.connect(
     user='root',
+    password=password,
     unix_socket='/tmp/mysql.sock',
     database=dbName,
 )
 
 # Create a cursor
 cur = connection.cursor()
+
+# Read and execute schema.sql
+with open('schema.sql', 'r') as file:
+    schema_sql = file.read()
+
+# Execute SQL commands
+for result in cur.execute(schema_sql, multi=True):
+    print(f"Executed: {result}")
 
 # Close the connection
 connection.close()

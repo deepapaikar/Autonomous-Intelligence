@@ -1,3 +1,4 @@
+-- Drop tables in reverse order of dependencies
 DROP TABLE IF EXISTS Subscriptions;
 DROP TABLE IF EXISTS StripeInfo;
 DROP TABLE IF EXISTS freeTrialsAccessed;
@@ -14,6 +15,15 @@ DROP TABLE IF EXISTS apiKeys;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS freeTrialAllowlist;
 DROP TABLE IF EXISTS organizations;
+
+-- Add organizations table first
+CREATE TABLE organizations (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    organization_type ENUM('enterprise', 'individual') NOT NULL,
+    website_url VARCHAR(255),
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -165,7 +175,6 @@ CREATE TABLE reports (
     FOREIGN KEY (workflow_id) REFERENCES workflows(id)
 );
 
-
 CREATE TABLE apiKeys (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -176,15 +185,7 @@ CREATE TABLE apiKeys (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Add new organizations table
-CREATE TABLE organizations (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    organization_type ENUM('enterprise', 'individual') NOT NULL,
-    website_url VARCHAR(255),
-    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
+-- Indexes
 CREATE UNIQUE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_chats_user_id ON chats(user_id);
 CREATE INDEX idx_messages_chat_id ON messages(chat_id);

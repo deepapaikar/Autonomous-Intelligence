@@ -54,7 +54,7 @@ def get_db_connection():
             # print("in daniel location")
             conn = mysql.connector.connect(
                 user='root',
-                password='1165205407',
+                password='deepa2497',
                 host='localhost',
                 port=3306,
                 database=dbName
