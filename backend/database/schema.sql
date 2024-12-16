@@ -14,7 +14,6 @@ DROP TABLE IF EXISTS workflows;
 DROP TABLE IF EXISTS apiKeys;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS freeTrialAllowlist;
-DROP TABLE IF EXISTS organizations;
 
 -- Add organizations table first
 CREATE TABLE organizations (
@@ -41,9 +40,7 @@ CREATE TABLE users (
     credits INTEGER NOT NULL DEFAULT 0,
     credits_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     chat_gpt_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    num_chatgpt_requests INTEGER NOT NULL DEFAULT 0,
-    organization_id INTEGER DEFAULT NULL,
-    FOREIGN KEY (organization_id) REFERENCES organizations(id)
+    num_chatgpt_requests INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE StripeInfo (
@@ -93,9 +90,7 @@ CREATE TABLE chats (
     ticker TEXT,
     associated_task INTEGER NOT NULL,
     custom_model_key TEXT,
-    organization_id INTEGER DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (organization_id) REFERENCES organizations(id)
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE messages (
@@ -114,9 +109,7 @@ CREATE TABLE workflows (
     workflow_name VARCHAR(255),
     associated_task INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    organization_id INTEGER DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (organization_id) REFERENCES organizations(id)
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE tickers (
@@ -134,10 +127,8 @@ CREATE TABLE documents (
     storage_key TEXT NOT NULL,
     document_name VARCHAR(255) NOT NULL,
     document_text LONGTEXT NOT NULL,
-    organization_id INTEGER DEFAULT NULL,
     FOREIGN KEY (workflow_id) REFERENCES workflows(id),
-    FOREIGN KEY (chat_id) REFERENCES chats(id),
-    FOREIGN KEY (organization_id) REFERENCES organizations(id)
+    FOREIGN KEY (chat_id) REFERENCES chats(id)
 );
 
 CREATE TABLE chunks (
@@ -198,6 +189,5 @@ CREATE INDEX idx_chunks_document_id ON chunks(document_id);
 CREATE INDEX idx_prompts_workflow_id ON prompts(workflow_id);
 CREATE INDEX idx_prompt_answers_prompt_id ON prompt_answers(prompt_id);
 CREATE INDEX idx_prompt_answers_citation_id ON prompt_answers(citation_id);
-CREATE INDEX idx_apiKeys_user_id ON apiKeys(user_id);
 CREATE INDEX idx_reports_workflow_id ON reports(workflow_id);
 CREATE INDEX idx_tickers_workflow_id ON tickers(workflow_id);
